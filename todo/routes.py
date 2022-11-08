@@ -120,11 +120,12 @@ def add_category():
             if category_in_db:
                 user.categories.append(category_in_db)
             else:
-                category = Category(name=name, user=user)
+                category = Category(name=name)
                 db.session.add(category)
+                user.categories.append(category)
+                category.users.append(user)
             db.session.commit()
             flash("New Category Created!", "success")
-    categories = db.session.query(Category).filter_by(
-        user_id=current_user.get_id())
+    categories = db.session.query(Category).filter(Category.users.any(User.id == current_user.get_id()))
     return render_template("category.html", category_form=form,
                            categories=categories)

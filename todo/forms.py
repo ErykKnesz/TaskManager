@@ -6,10 +6,12 @@ from wtforms.validators import DataRequired, Email
 
 def get_categories():
     try:
-        return [(category.id, category.name)
-                for category in current_user.categories]
+        choices = [(category.id, category.name)
+                   for category in current_user.categories]
+        choices.append((0, ""))
+        return choices
     except AttributeError:
-        return ""
+        return 0, ""
 
 
 class CreateTaskForm(FlaskForm):
