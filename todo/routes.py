@@ -14,16 +14,6 @@ from todo.forms import CreateTaskForm, CreateCategoryForm, UserForm, get_categor
 login_manager = LoginManager()
 login_manager.init_app(app)
 
-# def admin_only(func):
-#     @wraps(func)
-#     def inner(*args, **kwargs):
-#         try:
-#             if current_user.id == 1:
-#                 return func(*args, **kwargs)
-#         except AttributeError:
-#             return abort(403)
-#     return inner
-
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -105,6 +95,16 @@ def add_task():
             db.session.commit()
         return redirect(url_for("home"))
     return render_template("task.html", task_form=form)
+
+
+@login_required
+@app.route("/delete-task/<int:task_id>")
+def delete_task(task_id):
+    task = db.session.query(ToDo).get(task_id)
+    flash("Task Deleted!", "success")
+    db.session.delete(task)
+    db.session.commit()
+    return redirect(url_for("home"))
 
 
 @login_required
