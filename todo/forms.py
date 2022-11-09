@@ -20,6 +20,10 @@ class CreateTaskForm(FlaskForm):
                            coerce=int)
     submit = SubmitField("Create Task")
 
+    def populate_obj(self, obj):
+        obj.description = self.description.data
+        obj.category_id = self.category.data
+
 
 class CreateCategoryForm(FlaskForm):
     name = StringField("Category Name", validators=[DataRequired()])

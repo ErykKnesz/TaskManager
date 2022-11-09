@@ -5,7 +5,7 @@
     <div class="container text-center">
         <h2>Add New Task</h2>
     </div>
-    <form method="POST" action="{{ url_for('add_task') }}">
+    <form method="POST" action="{{ url_for('update_task', task_id=task_id) }}">
         {{ task_form.csrf_token }}
         <div class="mb-3">
             {{ task_form.description.label(class="form-label") }}
@@ -17,7 +17,7 @@
 
         </div>
         <div class="mb-3">
-            {{ task_form.submit(class="btn btn-primary") }}
+            {{ task_form.submit(class="btn btn-primary", value="Update Task") }}
         </div>
     </form>
 </div>

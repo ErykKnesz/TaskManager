@@ -101,10 +101,28 @@ def add_task():
 @app.route("/delete-task/<int:task_id>")
 def delete_task(task_id):
     task = db.session.query(ToDo).get(task_id)
-    flash("Task Deleted!", "success")
     db.session.delete(task)
     db.session.commit()
+    flash("Task Deleted!", "success")
     return redirect(url_for("home"))
+
+
+@login_required
+@app.route("/update-task/<int:task_id>", methods=["GET", "POST"])
+def update_task(task_id):
+    task = db.session.query(ToDo).get(task_id)
+    form = CreateTaskForm()
+    form.category.choices = get_categories()
+    if request.method == "POST":
+        if form.validate_on_submit():
+            form.populate_obj(task)
+            db.session.commit()
+            flash("Task Updated!", "success")
+        return redirect(url_for("home"))
+    form.description.data = task.description
+    return render_template("edit_task.html",
+                           task_form=form,
+                           task_id=task_id)
 
 
 @login_required
