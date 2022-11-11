@@ -1,3 +1,5 @@
+import datetime
+
 from flask_login import UserMixin
 
 from . import db
@@ -17,6 +19,9 @@ class Category(db.Model):
 class ToDo(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     description = db.Column(db.String(500))
+    is_completed = db.Column(db.Boolean, default=False)
+    create_date = db.Column(db.Date, default=datetime.date.today())
+    deadline = db.Column(db.Date)
     category_id = db.Column(db.Integer, db.ForeignKey("category.id"))
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
 

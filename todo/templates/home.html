@@ -13,13 +13,22 @@
         {% for task in tasks %}
         <div class="col-lg-3 col-md-6 mb-4">
             <div class="card" style="width: 18rem;">
-              <div class="card-body">
-                <h5 class="card-title">Task of category: {{ task.category.name }}</h5>
+              <div class="card-body {% if task.is_completed %} bg-success {% endif %}">
+                <h5 class="card-title">{{ task.category.name|title() }}</h5>
                 <p class="card-text">{{ task.description }}</p>
+                 {% if not task.is_completed %}
                 <a href="{{ url_for('update_task', task_id=task.id) }}" class="btn btn-primary">Edit</a>
                 <a href="{{ url_for('delete_task', task_id=task.id) }}" class="btn btn-danger">Delete</a>
-                <a href="#" class="btn btn-success">Complete</a>
+                <a href="{{ url_for('complete_task', task_id=task.id) }}" class="btn btn-success">Complete</a>
+                 {% else %}
+                <a href="{{ url_for('delete_task', task_id=task.id) }}" class="btn btn-danger">Delete</a>
+                <a href="{{ url_for('complete_task', task_id=task.id) }}" class="btn btn-warning">Not Complete</a>
+                 {% endif %}
               </div>
+                <div class="card-footer">
+                 <small class="text-start">Created: {{ task.create_date }}</small><br>
+                 <small class="text-end">Complete by: {% if task.deadline %}{{ task.deadline }} {%endif %} </small>
+                </div>
             </div>
         </div>
     {% endfor %}
@@ -36,6 +45,10 @@
         <div class="mb-3">
             {{ task_form.description.label(class="form-label") }}
             {{ task_form.description(size=20, class="form-control") }}
+        </div>
+        <div class="mb-3">
+            {{ task_form.deadline.label(class="form-label") }}
+            {{ task_form.deadline(class="form-control") }}
         </div>
         <div class="mb-3">
             {{ task_form.category.label(class="form-label") }}

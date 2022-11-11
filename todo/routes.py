@@ -1,10 +1,9 @@
 from datetime import date
-from functools import wraps
-import os
 
-from flask import render_template, request, redirect, url_for, flash, abort
+from flask import render_template, request, redirect, url_for, flash
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask_login import login_user, LoginManager, login_required, current_user, logout_user
+from flask_login import (login_user, LoginManager, login_required,
+                         current_user, logout_user)
 from sqlalchemy.exc import IntegrityError
 
 from todo import app, db
@@ -71,7 +70,10 @@ def logout():
 
 @app.route("/")
 def home():
-    tasks = db.session.query(ToDo).filter_by(user_id=current_user.get_id())
+    tasks = db.session.query(ToDo).filter_by(
+        user_id=current_user.get_id()).order_by(
+         ToDo.category_id
+    )
     task_form = CreateTaskForm()
     task_form.category.choices = get_categories()
     category_form = CreateCategoryForm()
@@ -90,7 +92,7 @@ def add_task():
         if form.validate():
             flash("New Task Created!", "success")
             task = ToDo(description=form.data["description"], user=user,
-                        category=category)
+                        category=category, deadline=form.data['deadline'])
             db.session.add(task)
             db.session.commit()
         return redirect(url_for("home"))
@@ -144,6 +146,18 @@ def add_category():
                 category.users.append(user)
             db.session.commit()
             flash("New Category Created!", "success")
-    categories = db.session.query(Category).filter(Category.users.any(User.id == current_user.get_id()))
+    categories = db.session.query(Category).filter(Category.users.any(
+        User.id == current_user.get_id()))
     return render_template("category.html", category_form=form,
                            categories=categories)
+
+
+@login_required
+@app.route("/complete-task/<int:task_id>", methods=["GET"])
+def complete_task(task_id):
+    task = db.session.query(ToDo).get(task_id)
+    task.is_completed = True if not task.is_completed else False
+    db.session.add(task)
+    db.session.commit()
+    return redirect(url_for('home'))
+

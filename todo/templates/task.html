@@ -12,9 +12,12 @@
             {{ task_form.description(size=20, class="form-control") }}
         </div>
         <div class="mb-3">
+            {{ task_form.deadline.label(class="form-label") }}
+            {{ task_form.deadline(class="form-control") }}
+        </div>
+        <div class="mb-3">
             {{ task_form.category.label(class="form-label") }}
             {{ task_form.category(class="form-select") }}
-
         </div>
         <div class="mb-3">
             {{ task_form.submit(class="btn btn-primary") }}

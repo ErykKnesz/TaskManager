@@ -1,7 +1,8 @@
 from flask_wtf import FlaskForm
 from flask_login import current_user
-from wtforms import StringField, TextAreaField, PasswordField, SubmitField, SelectField
-from wtforms.validators import DataRequired, Email
+from wtforms import (StringField, TextAreaField, PasswordField, SubmitField,
+                     SelectField, DateField)
+from wtforms.validators import DataRequired, Email, Optional
 
 
 def get_categories():
@@ -18,11 +19,13 @@ class CreateTaskForm(FlaskForm):
     description = TextAreaField("Description of the Task", validators=[DataRequired()])
     category = SelectField("Category", choices=get_categories(),
                            coerce=int)
+    deadline = DateField("Deadline (optional)", validators=[Optional()])
     submit = SubmitField("Create Task")
 
     def populate_obj(self, obj):
         obj.description = self.description.data
         obj.category_id = self.category.data
+        obj.deadline = self.deadline.data
 
 
 class CreateCategoryForm(FlaskForm):
