@@ -28,7 +28,7 @@ def register():
                                            method='pbkdf2:sha256',
                                            salt_length=8)
         if User.query.filter_by(email=form.data['email']).first():
-            flash('This email address is already used')
+            flash('This email address is already used', "info")
             return redirect(url_for('login'))
         try:
             user = User(
@@ -38,8 +38,8 @@ def register():
             db.session.add(user)
             db.session.commit()
         except IntegrityError:
-            flash('Unexpected Error. Please try again.')
-        flash('New User Created!')
+            flash('Unexpected Error. Please try again.', "info")
+        flash('New User Created!', "success")
         return redirect(url_for("home"))
     return render_template("register.html", form=form)
 
@@ -54,9 +54,9 @@ def login():
                 if check_password_hash(user.password, form.data["password"]):
                     login_user(user)
                     return redirect(url_for('home'))
-                flash('Wrong password.')
+                flash('Wrong password.', "info")
                 return redirect(url_for('login'))
-            flash('Email address not found.')
+            flash('Email address not found.', "info")
             return redirect(url_for('login'))
     return render_template("login.html", form=form)
 
@@ -71,9 +71,27 @@ def logout():
 @app.route("/")
 def home():
     tasks = db.session.query(ToDo).filter_by(
-        user_id=current_user.get_id()).order_by(
-         ToDo.category_id
-    )
+        user_id=current_user.get_id())
+    if 'sort' in request.args.keys():
+        if request.args['sort'] == 'deadline':
+            tasks = tasks.order_by(ToDo.deadline.desc())
+        elif request.args['sort'] == 'create_date':
+            tasks = tasks.order_by(ToDo.create_date.desc())
+        elif request.args['sort'] == 'completed':
+            tasks = tasks.order_by(ToDo.is_completed.desc())
+        elif request.args['sort'] == 'not completed':
+            tasks = tasks.order_by(ToDo.is_completed.asc())
+    elif 'filter' in request.args.keys():
+        if request.args['filter'] == 'deadline':
+            tasks = tasks.filter_by(deadline=date.today())
+        elif request.args['filter'] == 'create_date':
+            tasks = tasks.filter_by(create_date=date.today())
+        elif request.args['filter'] == 'completed':
+            tasks = tasks.filter_by(is_completed=True)
+        elif request.args['filter'] == 'not completed':
+            tasks = tasks.filter_by(is_completed=False)
+    else:
+        tasks = tasks.order_by(ToDo.category_id)
     task_form = CreateTaskForm()
     task_form.category.choices = get_categories()
     category_form = CreateCategoryForm()
@@ -114,13 +132,15 @@ def delete_task(task_id):
 def update_task(task_id):
     task = db.session.query(ToDo).get(task_id)
     form = CreateTaskForm()
-    form.category.choices = get_categories()
+    form.category.choices = get_categories(task.category)
     if request.method == "POST":
         if form.validate_on_submit():
             form.populate_obj(task)
             db.session.commit()
             flash("Task Updated!", "success")
         return redirect(url_for("home"))
+    form.deadline.data = task.deadline
+    form.category.data = task.category
     form.description.data = task.description
     return render_template("edit_task.html",
                            task_form=form,

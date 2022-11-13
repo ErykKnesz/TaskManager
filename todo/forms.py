@@ -5,10 +5,16 @@ from wtforms import (StringField, TextAreaField, PasswordField, SubmitField,
 from wtforms.validators import DataRequired, Email, Optional
 
 
-def get_categories():
+def get_categories(current=None):
     try:
-        choices = [(category.id, category.name)
-                   for category in current_user.categories]
+        if current:
+            choices = [(category.id, category.name)
+                       for category in current_user.categories
+                       if category.id != current.id]
+            choices = [(current.id, current.name)] + choices
+        else:
+            choices = [(category.id, category.name)
+                       for category in current_user.categories]
         choices.append((0, ""))
         return choices
     except AttributeError:
