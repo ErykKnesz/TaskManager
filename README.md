@@ -4,4 +4,4 @@ The purpose of this app is to bear some resemblance to the famous task managemen
 
 Sorting and filtering of tasks by dates or status is also implemented.
 
-Deployed on Heroku: https://eryks-taskmanager.herokuapp.com/
+Deployed here: Eryk.pythonanywhere.com 
