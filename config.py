@@ -11,8 +11,6 @@ class Config:
             'sqlite:///' + os.path.join(BASE_DIR, 'todo.db')
     )
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    ADMIN_USERNAME = os.environ.get("ADMIN_USERNAME")
-    ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD")
 
 
 config = Config()
