@@ -8,7 +8,8 @@ from sqlalchemy.exc import IntegrityError
 
 from todo import app, db
 from todo.models import ToDo, Category, User
-from todo.forms import CreateTaskForm, CreateCategoryForm, UserForm, get_categories
+from todo.forms import (CreateTaskForm, CreateCategoryForm, UserForm,
+                        get_categories)
 
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -180,4 +181,3 @@ def complete_task(task_id):
     db.session.add(task)
     db.session.commit()
     return redirect(url_for('home'))
-

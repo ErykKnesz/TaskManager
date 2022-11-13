@@ -22,7 +22,8 @@ def get_categories(current=None):
 
 
 class CreateTaskForm(FlaskForm):
-    description = TextAreaField("Description of the Task", validators=[DataRequired()])
+    description = TextAreaField("Description of the Task",
+                                validators=[DataRequired()])
     category = SelectField("Category", choices=get_categories(),
                            coerce=int)
     deadline = DateField("Deadline (optional)", validators=[Optional()])
