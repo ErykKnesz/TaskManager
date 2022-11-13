@@ -18,7 +18,12 @@
         {{ category_form.csrf_token }}
         <div class="mb-3">
             {{ category_form.name.label(class="form-label") }}
-            {{ category_form.name(size=20, class="form-control") }}
+            {% if category_form.errors.name %}
+                {{ category_form.name(size=20, class="form-control is-invalid") }}
+            {% else %}
+                {{ category_form.name(size=20, class="form-control") }}
+            {% endif %}
+             <div class="invalid-feedback">{{ category_form.errors.name|join(' ') }}</div>
         </div>
         <div class="mb-3">
             {{ category_form.submit(class="btn btn-primary") }}

@@ -45,7 +45,12 @@
         {{ task_form.csrf_token }}
         <div class="mb-3">
             {{ task_form.description.label(class="form-label") }}
-            {{ task_form.description(size=20, class="form-control") }}
+            {% if task_form.errors.description %}
+                {{ task_form.description(size=20, class="form-control is-invalid") }}
+            {% else %}
+                {{ task_form.description(size=20, class="form-control") }}
+            {% endif %}
+             <div class="invalid-feedback">{{ task_form.errors.description|join(' ') }}</div>
         </div>
         <div class="mb-3">
             {{ task_form.deadline.label(class="form-label") }}
@@ -70,7 +75,12 @@
         {{ category_form.csrf_token }}
         <div class="mb-3">
             {{ category_form.name.label(class="form-label") }}
-            {{ category_form.name(size=20, class="form-control") }}
+            {% if category_form.errors.name %}
+                {{ category_form.name(size=20, class="form-control is-invalid") }}
+            {% else %}
+                {{ category_form.name(size=20, class="form-control") }}
+            {% endif %}
+             <div class="invalid-feedback">{{ category_form.errors.name|join(' ') }}</div>
         </div>
         <div class="mb-3">
             {{ category_form.submit(class="btn btn-primary") }}
